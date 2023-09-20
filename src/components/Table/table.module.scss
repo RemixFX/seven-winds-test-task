@@ -1,0 +1,36 @@
+.table {
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  width: max-content;
+  padding: 11px 15px 12px;
+  font-size: 18px;
+  border-right: 1px solid var(--border-color);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: auto 44.9% 11.86% 11.86% 11.86% 11.86%;
+}
+
+.designations {
+  min-height: 42px;
+  list-style: none;
+  padding: 11px 9px 0 10px;
+  border-top: 1px solid var(--border-color)
+}
+
+.item {
+  
+}
+
+.title {
+  padding: 0 12px 12px;
+  line-height: 130%;
+  color: var(--grey-color);
+  letter-spacing: 0.1px;
+  font-feature-settings: 'clig' off, 'liga' off;
+}
+

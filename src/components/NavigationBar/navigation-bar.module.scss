@@ -1,0 +1,27 @@
+.component {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 40px);
+  border-right: 1px solid var(--border-color);
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  height: 44px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.title {
+  display: flex;
+  flex-direction: column;
+  color: var(--grey-color);
+  padding-left: 12px;
+
+  span {
+    font-size: 10px;
+  }
+
+}
