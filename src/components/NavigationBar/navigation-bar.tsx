@@ -10,7 +10,7 @@ export default function NavigationBar() {
           <span>Аббревиатура</span>
         </div>
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <g clip-path="url(#clip0_3_4487)">
+          <g clipPath="url(#clip0_3_4487)">
             <path d="M7.41 8.59L12 13.17L16.59 8.59L18 10L12 16L6 10L7.41 8.59Z" fill="white" />
           </g>
           <defs>
