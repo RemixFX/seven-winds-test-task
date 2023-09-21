@@ -11,6 +11,8 @@
 
   --border-color: #414144;
   --grey-color: #A1A1AA;
+  --dark-background: #202124;
+  --grid-column: auto 44.9% 11.86% 11.86% 11.86% 11.86%;
 }
 
 * {
@@ -24,7 +26,7 @@ body {
   min-width: 320px;
   max-width: 1920px;
   color: #fff;
-  background: #202124;
+  background: #27272A;
   font-size: 14px;
   margin: auto;
 }
