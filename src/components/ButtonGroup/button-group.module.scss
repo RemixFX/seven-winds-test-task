@@ -1,0 +1,39 @@
+.group {
+  margin-left: 12px;
+  display: flex;
+  align-items: center;
+  width: 55px;
+  justify-content: flex-start;
+  position: relative;
+
+  &[data-parent=true] {
+    &::after {
+      content: '';
+      width: 21%;
+      height: 89%;
+      border-right: 1px solid #C6C6C6;
+      position: absolute;
+      top: 83%;
+      left: 0;
+    }
+  }
+
+  &[data-child=true] {
+    &::before {
+      content: "";
+      width: 25%;
+      height: 125%;
+      border-left: 1px solid #C6C6C6;
+      border-bottom: 1px solid #C6C6C6;
+      position: absolute;
+      top: -78%;
+      left: -8.3px;
+    }
+  }
+}
+
+.active {
+  justify-content: space-around;
+  background: var(--border-color);
+  border-radius: 6px;
+}

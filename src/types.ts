@@ -1,4 +1,5 @@
-export interface Row {
+
+export interface RowData {
   equipmentCosts: number
   estimatedProfit: number
   id: number
@@ -10,15 +11,19 @@ export interface Row {
   rowName: string
   salary: number
   supportCosts: number
-  total: number
+  total?: number
 }
 
-export interface TreeResponse extends Row{
-  child?: Row[] | null[]
+export interface TreeResponse extends RowData {
+  child?: RowData[]
 }
 
-export interface OutlayRowRequest {
+export interface DeleteRowRequest {
   eID: number
+  rID: number
+}
+
+export interface CreateRowRequest {
   equipmentCosts: number
   estimatedProfit: number
   machineOperatorSalary: number
@@ -32,7 +37,29 @@ export interface OutlayRowRequest {
   supportCosts: number
 }
 
+export interface UpdateOrCreateRowRequest extends CreateRowRequest {
+  id?: number
+}
+
+export interface UpdateRowRequest extends CreateRowRequest {
+  id: number
+}
+
+export interface CreateRowRequestWithId extends CreateRowRequest {
+  eID: number
+}
+
+export interface UpdateRowRequestWithId extends UpdateOrCreateRowRequest {
+  eID: number
+  rID: number
+}
+
 export interface ResponseRow {
-  changed: Row[]
-  current: Row
+  changed: RowData[]
+  current: RowData
+}
+
+export interface ResponseDeleteRow {
+  changed: RowData[]
+  current: null
 }

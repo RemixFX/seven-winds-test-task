@@ -1,20 +1,17 @@
-export interface FormState {
-  rowName: string
-  salary: number
-  equipmentCosts: number
-  overheads: number
-  estimatedProfit: number
-}
+import { UpdateOrCreateRowRequest } from "../../types"
 
 export type Action = 
- | { type: "change_rowName"; newValue: FormState["rowName"] }
- | { type: "change_salary"; newValue: FormState["salary"] }
- | { type: "change_equipmentCosts"; newValue: FormState["equipmentCosts"] }
- | { type: "change_overheads"; newValue: FormState["overheads"] }
- | { type: "change_estimatedProfit"; newValue: FormState["estimatedProfit"] }
+ | { type: "change_rowName"; newValue: UpdateOrCreateRowRequest["rowName"] }
+ | { type: "change_salary"; newValue: UpdateOrCreateRowRequest["salary"] }
+ | { type: "change_equipmentCosts"; newValue: UpdateOrCreateRowRequest["equipmentCosts"] }
+ | { type: "change_overheads"; newValue: UpdateOrCreateRowRequest["overheads"] }
+ | { type: "change_estimatedProfit"; newValue: UpdateOrCreateRowRequest["estimatedProfit"] }
 
 
 
 export interface EditableRowProps {
-  createRow(args: FormState): void
+  updateOrCreateRow(state: UpdateOrCreateRowRequest): void
+  isEditedData?: UpdateOrCreateRowRequest
+  parentId: UpdateOrCreateRowRequest['parentId']
+  isLoaded?: boolean
 }

@@ -14,6 +14,8 @@
 .layout {
   background: var(--dark-background);
   flex-grow: 1;
+  padding: 0 10px 10px;
+  border-top: 1px solid var(--border-color);
 }
 
 .grid {
@@ -21,8 +23,7 @@
   grid-template-columns: var(--grid-column);
   min-height: 42px;
   list-style: none;
-  padding: 11px 9px 0 10px;
-  border-top: 1px solid var(--border-color)
+  padding-top: 11px;
 }
 
 .title {

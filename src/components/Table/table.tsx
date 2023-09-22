@@ -1,31 +1,36 @@
-import { useCreateRowInEntityMutation, useGetTreeRowsQuery } from '../../api'
+import { useCreateRowInEntityMutation, useDeleteRowMutation, useGetTreeRowsQuery, useUpdateRowInEntityMutation } from '../../api'
 import { ID } from '../../config/consts'
-import { OutlayRowRequest } from '../../types'
+import { UpdateOrCreateRowRequest } from '../../types'
 import EditableRow from '../EditableRow/editable-row'
-import { FormState } from '../EditableRow/editable-row.types'
+import RowDisplay from '../RowDisplay/row-display'
 import styles from './table.module.scss'
 
 export default function Table() {
 
-  const [createRowInEntity, result] = useCreateRowInEntityMutation()
-  const { data, error, isLoading } = useGetTreeRowsQuery(ID)
+  const [createRowInEntity, {isSuccess: isCreated}] = useCreateRowInEntityMutation()
+  const [updateRowInEntity, {isSuccess: isUpdated}] = useUpdateRowInEntityMutation()
+  const [deleteRowInEtity] = useDeleteRowMutation()
+  const { data } = useGetTreeRowsQuery(ID)
 
-  const createRow = (state: FormState) => {
-    const data: OutlayRowRequest = {
-      ...state,
-      eID: ID,
-      machineOperatorSalary: 0,
-      mainCosts: 0,
-      materials: 0,
-      mimExploitation: 0,
-      parentId: null,
-      supportCosts: 0
+  const updateOrCreateRow = (request: UpdateOrCreateRowRequest) => {
+    if (!request.id) {
+      createRowInEntity({
+        ...request,
+        eID: ID,
+      })
+    } else {
+      updateRowInEntity({
+        ...request,
+        eID: ID,
+        rID: request.id
+      })
     }
-    createRowInEntity(data)
-    
   }
-  console.log(data)
-  
+
+  const deleteRow = (rID: number) => {
+    deleteRowInEtity({eID: ID, rID})
+  }
+
   return (
     <section className={styles.table}>
       <h1 className={styles.header}>Строительно-монтажные работы</h1>
@@ -50,7 +55,22 @@ export default function Table() {
             <p className={styles.title}>Сметная прибыль</p>
           </li>
         </ul>
-        <EditableRow createRow={createRow}/>
+        {(data && data.length === 0) &&
+          <EditableRow updateOrCreateRow={updateOrCreateRow}
+          isLoaded={isCreated}
+          parentId={null}
+          />
+        }
+        {data && data.map((row) =>
+          <RowDisplay
+            key={row.id}
+            data={row}
+            updateOrCreateRow={updateOrCreateRow}
+            deleteRow={deleteRow}
+            isLoaded={isUpdated || isCreated}
+          />
+        )}
+
       </div>
     </section>
   )
