@@ -1,7 +1,9 @@
 
 export interface ButtonGroupProps {
-  hasChild: boolean | undefined
-  level: number | undefined
+  hasChild: boolean
+  hasSister: boolean
+  arrStream: boolean[]
+  level: number
   handleClickDelete(): void
   handleClickCreate(): void
 }

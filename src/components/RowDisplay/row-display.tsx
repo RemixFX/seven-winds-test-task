@@ -1,28 +1,18 @@
-import { useEffect, useState } from "react";
-import { CreateRowRequest, TreeResponse, UpdateRowRequest } from "../../types";
 import Row from "../Row/row";
 import { RowDisplayProps } from "./row-display.types";
 import EditableRow from "../EditableRow/editable-row";
 
-export default function RowDisplay({ data, updateOrCreateRow, deleteRow, isLoaded }: RowDisplayProps) {
+export default function RowDisplay({
+  data,
+  editeRow,
+  updateOrCreateRow,
+  createChildRow,
+  deleteRow,
+  isEdited,
+  parentId
+}: RowDisplayProps) {
 
-  const [isEdited, setIsEdited] = useState<UpdateRowRequest | null>(null)
-  const [parentId, setParentId] = useState<CreateRowRequest['parentId']>(null)
 
-  const editeRow = (data: UpdateRowRequest) => {
-    setIsEdited(data)
-  }
-
-  const createChildRow = (data: TreeResponse) => {
-    setParentId(data.id)
-  }
-
-  useEffect(() => {
-    if (isLoaded) {
-      setIsEdited(null)
-      setParentId(null)
-    }
-  }, [isLoaded])
 
   if (isEdited) {
     return (
@@ -49,13 +39,16 @@ export default function RowDisplay({ data, updateOrCreateRow, deleteRow, isLoade
       }
       {data.child &&
         data.child.map((data, index) =>
-          <Row
+          <RowDisplay
             level={index}
             key={data.id}
             data={data}
             editeRow={editeRow}
+            updateOrCreateRow={updateOrCreateRow}
             deleteRow={deleteRow}
             createChildRow={createChildRow}
+            isEdited={isEdited}
+            parentId={parentId}
           />
         )
       }

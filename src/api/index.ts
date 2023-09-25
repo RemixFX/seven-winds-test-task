@@ -1,6 +1,49 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { ResponseRow, ResponseDeleteRow, TreeResponse, DeleteRowRequest, UpdateRowRequestWithId, CreateRowRequestWithId } from '../types'
 
+// Рекурсивный поиск в "child" элементах
+
+const createItem = (tree: TreeResponse[], parentId: number, newItem: TreeResponse): void => {
+  for (const item of tree) {
+    if (item.id === parentId) {
+      if (!item.child) {
+        item.child = []
+      }
+      item.child.push(newItem)
+      return
+    }
+    if (item.child) {
+      createItem(item.child, parentId, newItem)
+    }
+  }
+}
+
+const updateItem = (tree: TreeResponse[], rID: number, newItem: TreeResponse): void => {
+  for (const item of tree) {
+    if (item.id === rID) {
+      Object.assign(item, newItem)
+      return
+    }
+    if (item.child) {
+      updateItem(item.child, rID, newItem)
+    }
+  }
+}
+
+const deleteItem = (tree: TreeResponse[], rID: number): void => {
+
+  const index = tree.findIndex(index => index.id === rID)
+  if (index !== -1) {
+    tree.splice(index, 1)
+    return
+  }
+  for (const item of tree) {
+    if (item.child) {
+      deleteItem(item.child, rID)
+    }
+  }
+}
+
 export const outlayStringControllerApi = createApi({
   reducerPath: 'outlayStringControllerApi',
   baseQuery: fetchBaseQuery({ baseUrl: 'http://185.244.172.108:8081/' }),
@@ -25,8 +68,8 @@ export const outlayStringControllerApi = createApi({
               if (data.parentId === null) {
                 draft.push(updatedRows.current)
               } else {
-                const foundIndex = draft.findIndex(index => index.id === data.parentId)
-                draft.splice(foundIndex + 1, 0, updatedRows.current)
+                console.log(data.parentId)
+                createItem(draft, data.parentId, updatedRows.current)
               }
             })
           )
@@ -41,13 +84,12 @@ export const outlayStringControllerApi = createApi({
         method: 'POST',
         body: data,
       }),
-      async onQueryStarted({ eID }, { dispatch, queryFulfilled }) {
+      async onQueryStarted({ eID, rID }, { dispatch, queryFulfilled }) {
         try {
           const { data: updatedRows } = await queryFulfilled
           dispatch(
             outlayStringControllerApi.util.updateQueryData('getTreeRows', eID, (draft) => {
-              const foundIndex = draft.findIndex(index => index.id === updatedRows.current.id)
-              draft[foundIndex] = updatedRows.current
+              updateItem(draft, rID, updatedRows.current)
             })
           )
         } catch {
@@ -66,8 +108,7 @@ export const outlayStringControllerApi = createApi({
           dispatch(
             outlayStringControllerApi.util.updateQueryData('getTreeRows', eID, (draft) => {
               if (deletedRow.current === null) {
-                const foundIndex = draft.findIndex(index => index.id === rID)
-                draft.splice(foundIndex, 1)
+                deleteItem(draft, rID)
               }
             })
           )
@@ -85,4 +126,5 @@ export const {
   useUpdateRowInEntityMutation,
   useDeleteRowMutation,
 } = outlayStringControllerApi
+
 

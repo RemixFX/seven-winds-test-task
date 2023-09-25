@@ -1,11 +1,12 @@
-import { ReactNode } from "react"
-import { TreeResponse } from "../../types"
+import { TreeResponse, UpdateOrCreateRowRequest } from "../../types"
 
 export interface RowProps {
-  level?: number
+  level: number
+  hasSister: boolean
+  arrStream: boolean[]
   data: TreeResponse
-  editeRow(data: TreeResponse): void
+  isCreated: boolean
+  isUpdated: boolean
   deleteRow(id: TreeResponse['id']): void
-  createChildRow(data: TreeResponse): void
-  children?: ReactNode
+  updateOrCreateRow(state: UpdateOrCreateRowRequest): void
 }

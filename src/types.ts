@@ -1,5 +1,5 @@
-
-export interface RowData {
+export interface TreeResponse  {
+  child: TreeResponse[]
   equipmentCosts: number
   estimatedProfit: number
   id: number
@@ -12,10 +12,6 @@ export interface RowData {
   salary: number
   supportCosts: number
   total?: number
-}
-
-export interface TreeResponse extends RowData {
-  child?: RowData[]
 }
 
 export interface DeleteRowRequest {
@@ -55,11 +51,11 @@ export interface UpdateRowRequestWithId extends UpdateOrCreateRowRequest {
 }
 
 export interface ResponseRow {
-  changed: RowData[]
-  current: RowData
+  changed: TreeResponse[]
+  current: TreeResponse
 }
 
 export interface ResponseDeleteRow {
-  changed: RowData[]
+  changed: TreeResponse[]
   current: null
 }

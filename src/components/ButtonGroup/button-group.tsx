@@ -2,22 +2,44 @@ import { useState } from 'react'
 import styles from './button-group.module.scss'
 import { ButtonGroupProps } from './button-group.types'
 
-function setStyleLevel (level: number | undefined): number {
-  if (level === undefined) return 12
-  if (level === 0) level = 1
+function setStyleLevel(level: number): number {
   return (level * 20) + 12
 }
 
-export default function ButtonGroup({level, hasChild, handleClickCreate, handleClickDelete}: ButtonGroupProps) {
+interface StyleLine {
+  line: boolean
+  padding: number
+}
+
+function setStyleStreamLine(arrStream: boolean[]): StyleLine[] {
+  return arrStream.map((line, index) => {
+    if (line) {
+      return {
+        line,
+        padding: -29 - ((arrStream.length - (index + 1)) * 20)
+      }
+    }
+    return { line, padding: 0 }
+  })
+}
+
+export default function ButtonGroup({ level, hasChild, arrStream, hasSister, handleClickCreate, handleClickDelete }: ButtonGroupProps) {
 
   const [showButton, setShowButton] = useState<boolean>(false)
 
   return (
-    <div className={`${styles.group} ${showButton ? styles.active : ''} ${hasChild && styles.row}`}
-     onMouseOver={() => setShowButton(true)} onMouseOut={() => setShowButton(false)}
-     style={{marginLeft:setStyleLevel(level)}} data-parent={hasChild} data-child={level !== undefined}>
-      <svg onClick={handleClickCreate} 
-      xmlns="http://www.w3.org/2000/svg" width="24" height="24" cursor="pointer" viewBox="0 0 24 24" fill="none">
+    <div className={`${styles.group} ${showButton ? styles.active : ''}`}
+      onMouseOver={() => setShowButton(true)} onMouseOut={() => setShowButton(false)}
+      style={{ marginLeft: setStyleLevel(level) }}>
+      <span data-parent={hasChild}></span>
+      <span data-child={level !== 0}></span>
+      <span data-sister={hasSister}></span>
+      {setStyleStreamLine(arrStream).map((inStream, index) =>
+        <span data-stream={inStream.line} key={index} style={{ left: inStream.padding }}></span>
+      )
+      }
+      <svg onClick={handleClickCreate}
+        xmlns="http://www.w3.org/2000/svg" width="24" height="24" cursor="pointer" viewBox="0 0 24 24" fill="none">
         <path d="M15.5556 4H5.77778C4.8 4 4 4.8 4 5.77778V18.2222C4 19.2 4.8 20 5.77778 20H18.2222C19.2 20 20 19.2 20 18.2222V8.44444L15.5556 4ZM7.55556 7.55556H12V9.33333H7.55556V7.55556ZM16.4444 16.4444H7.55556V14.6667H16.4444V16.4444ZM16.4444 12.8889H7.55556V11.1111H16.4444V12.8889ZM14.6667 9.33333V5.77778L18.2222 9.33333H14.6667Z" fill="#7890B2" />
       </svg>
       {showButton &&

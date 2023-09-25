@@ -1,14 +1,14 @@
 import { useCreateRowInEntityMutation, useDeleteRowMutation, useGetTreeRowsQuery, useUpdateRowInEntityMutation } from '../../api'
 import { ID } from '../../config/consts'
-import { UpdateOrCreateRowRequest } from '../../types'
+import { UpdateOrCreateRowRequest} from '../../types'
 import EditableRow from '../EditableRow/editable-row'
-import RowDisplay from '../RowDisplay/row-display'
 import styles from './table.module.scss'
+import Row from '../Row/row'
 
 export default function Table() {
 
-  const [createRowInEntity, {isSuccess: isCreated}] = useCreateRowInEntityMutation()
-  const [updateRowInEntity, {isSuccess: isUpdated}] = useUpdateRowInEntityMutation()
+  const [createRowInEntity, { isSuccess: isCreated }] = useCreateRowInEntityMutation()
+  const [updateRowInEntity, { isSuccess: isUpdated }] = useUpdateRowInEntityMutation()
   const [deleteRowInEtity] = useDeleteRowMutation()
   const { data } = useGetTreeRowsQuery(ID)
 
@@ -28,8 +28,9 @@ export default function Table() {
   }
 
   const deleteRow = (rID: number) => {
-    deleteRowInEtity({eID: ID, rID})
+    deleteRowInEtity({ eID: ID, rID })
   }
+  
 
   return (
     <section className={styles.table}>
@@ -57,20 +58,24 @@ export default function Table() {
         </ul>
         {(data && data.length === 0) &&
           <EditableRow updateOrCreateRow={updateOrCreateRow}
-          isLoaded={isCreated}
-          parentId={null}
+            isEditedData={null}
+            isLoaded={isCreated}
+            parentId={null}
           />
         }
         {data && data.map((row) =>
-          <RowDisplay
+          <Row
             key={row.id}
+            level={0}
+            hasSister={false}
+            arrStream={[]}
             data={row}
-            updateOrCreateRow={updateOrCreateRow}
             deleteRow={deleteRow}
-            isLoaded={isUpdated || isCreated}
+            updateOrCreateRow={updateOrCreateRow}
+            isCreated={isCreated}
+            isUpdated={isUpdated}
           />
         )}
-
       </div>
     </section>
   )

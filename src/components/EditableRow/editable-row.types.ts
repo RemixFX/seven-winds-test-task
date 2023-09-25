@@ -11,7 +11,8 @@ export type Action =
 
 export interface EditableRowProps {
   updateOrCreateRow(state: UpdateOrCreateRowRequest): void
-  isEditedData?: UpdateOrCreateRowRequest
+  isEditedData: UpdateOrCreateRowRequest | null
   parentId: UpdateOrCreateRowRequest['parentId']
   isLoaded?: boolean
+  level: number
 }
