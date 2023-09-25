@@ -4,6 +4,7 @@ import { setInitialState, reducer } from './editable-row.service'
 import { EditableRowProps } from './editable-row.types'
 
 function setStyleLevel(level: number): number {
+  if (!level) return 12
   return (level * 20) + 12
 }
 

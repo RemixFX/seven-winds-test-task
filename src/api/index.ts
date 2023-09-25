@@ -1,46 +1,61 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { ResponseRow, ResponseDeleteRow, TreeResponse, DeleteRowRequest, UpdateRowRequestWithId, CreateRowRequestWithId } from '../types'
+import { ResponseRow, TreeResponse, DeleteRowRequest, UpdateRowRequestWithId, CreateRowRequestWithId } from '../types'
 
-// Рекурсивный поиск в "child" элементах
+// Рекурсивная функция для добавления новых элементов
 
-const createItem = (tree: TreeResponse[], parentId: number, newItem: TreeResponse): void => {
+// Рекурсивная функция для создания новых элементов
+const createItem = (tree: TreeResponse[], parentId: number, createdItems: ResponseRow): void => {
   for (const item of tree) {
     if (item.id === parentId) {
       if (!item.child) {
-        item.child = []
+        item.child = [];
       }
-      item.child.push(newItem)
-      return
+      item.child.push(createdItems.current);
     }
     if (item.child) {
-      createItem(item.child, parentId, newItem)
+      createItem(item.child, parentId, createdItems);
     }
+  }
+
+  // Обновляем элементы из массива changed
+  for (const changedItem of createdItems.changed) {
+    updateItem(tree, changedItem.id, { current: changedItem, changed: [] });
   }
 }
 
-const updateItem = (tree: TreeResponse[], rID: number, newItem: TreeResponse): void => {
+// Рекурсивная функция для обновления элементов
+const updateItem = (tree: TreeResponse[], rID: number, updatedItems: ResponseRow): void => {
   for (const item of tree) {
     if (item.id === rID) {
-      Object.assign(item, newItem)
-      return
+      Object.assign(item, updatedItems.current);
     }
     if (item.child) {
-      updateItem(item.child, rID, newItem)
+      updateItem(item.child, rID, updatedItems);
     }
+  }
+
+  // Обновляем элементы из массива changed
+  for (const changedItem of updatedItems.changed) {
+    updateItem(tree, changedItem.id, { current: changedItem, changed: [] });
   }
 }
 
-const deleteItem = (tree: TreeResponse[], rID: number): void => {
-
-  const index = tree.findIndex(index => index.id === rID)
+// Рекурсивная функция для удаления элемента
+const deleteItem = (tree: TreeResponse[], rID: number, deletedItems: ResponseRow): void => {
+  const index = tree.findIndex(index => index.id === rID);
   if (index !== -1) {
-    tree.splice(index, 1)
-    return
+    tree.splice(index, 1);
   }
+
   for (const item of tree) {
     if (item.child) {
-      deleteItem(item.child, rID)
+      deleteItem(item.child, rID, deletedItems);
     }
+  }
+
+  // Обновляем элементы из массива changed
+  for (const changedItem of deletedItems.changed) {
+    updateItem(tree, changedItem.id, { current: changedItem, changed: [] });
   }
 }
 
@@ -68,8 +83,7 @@ export const outlayStringControllerApi = createApi({
               if (data.parentId === null) {
                 draft.push(updatedRows.current)
               } else {
-                console.log(data.parentId)
-                createItem(draft, data.parentId, updatedRows.current)
+                createItem(draft, data.parentId, updatedRows)
               }
             })
           )
@@ -89,7 +103,7 @@ export const outlayStringControllerApi = createApi({
           const { data: updatedRows } = await queryFulfilled
           dispatch(
             outlayStringControllerApi.util.updateQueryData('getTreeRows', eID, (draft) => {
-              updateItem(draft, rID, updatedRows.current)
+              updateItem(draft, rID, updatedRows)
             })
           )
         } catch {
@@ -97,7 +111,7 @@ export const outlayStringControllerApi = createApi({
         }
       },
     }),
-    deleteRow: builder.mutation<ResponseDeleteRow, DeleteRowRequest>({
+    deleteRow: builder.mutation<ResponseRow, DeleteRowRequest>({
       query: ({ eID, rID }) => ({
         url: `/v1/outlay-rows/entity/${eID}/row/${rID}/delete`,
         method: 'DELETE',
@@ -107,9 +121,7 @@ export const outlayStringControllerApi = createApi({
           const { data: deletedRow } = await queryFulfilled
           dispatch(
             outlayStringControllerApi.util.updateQueryData('getTreeRows', eID, (draft) => {
-              if (deletedRow.current === null) {
-                deleteItem(draft, rID)
-              }
+              deleteItem(draft, rID, deletedRow)
             })
           )
         } catch {

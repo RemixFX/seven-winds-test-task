@@ -54,8 +54,3 @@ export interface ResponseRow {
   changed: TreeResponse[]
   current: TreeResponse
 }
-
-export interface ResponseDeleteRow {
-  changed: TreeResponse[]
-  current: null
-}
