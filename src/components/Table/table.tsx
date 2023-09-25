@@ -6,12 +6,14 @@ import styles from './table.module.scss'
 import Row from '../Row/row'
 
 export default function Table() {
-
+  
+  // Получения состояний создания, редактирования, удаления и текущих данных из хуков
   const [createRowInEntity, { isSuccess: isCreated }] = useCreateRowInEntityMutation()
   const [updateRowInEntity, { isSuccess: isUpdated }] = useUpdateRowInEntityMutation()
   const [deleteRowInEtity] = useDeleteRowMutation()
   const { data } = useGetTreeRowsQuery(ID)
 
+  // Универсальная функция запроса для отправки создания или изменения данных
   const updateOrCreateRow = (request: UpdateOrCreateRowRequest) => {
     if (!request.id) {
       createRowInEntity({
@@ -27,14 +29,14 @@ export default function Table() {
     }
   }
 
+  // Запрос на удаление данных
   const deleteRow = (rID: number) => {
     deleteRowInEtity({ eID: ID, rID })
   }
-  
 
   return (
     <section className={styles.table}>
-      <h1 className={styles.header}>Строительно-монтажные работы</h1>
+      <h1 className={styles.header}>Создание нового приложения</h1>
       <div className={styles.layout}>
         <ul className={styles.grid}>
           <li className={styles.item}>
@@ -58,6 +60,7 @@ export default function Table() {
         </ul>
         {(data && data.length === 0) &&
           <EditableRow updateOrCreateRow={updateOrCreateRow}
+            level={0}
             isEditedData={null}
             isLoaded={isCreated}
             parentId={null}

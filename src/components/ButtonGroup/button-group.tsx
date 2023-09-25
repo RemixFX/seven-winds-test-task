@@ -1,27 +1,7 @@
 import { useState } from 'react'
 import styles from './button-group.module.scss'
 import { ButtonGroupProps } from './button-group.types'
-
-function setStyleLevel(level: number): number {
-  return (level * 20) + 12
-}
-
-interface StyleLine {
-  line: boolean
-  padding: number
-}
-
-function setStyleStreamLine(arrStream: boolean[]): StyleLine[] {
-  return arrStream.map((line, index) => {
-    if (line) {
-      return {
-        line,
-        padding: -29 - ((arrStream.length - (index + 1)) * 20)
-      }
-    }
-    return { line, padding: 0 }
-  })
-}
+import { setStyleLevel, setStyleStreamLine } from './button-group.service'
 
 export default function ButtonGroup({ level, hasChild, arrStream, hasSister, handleClickCreate, handleClickDelete }: ButtonGroupProps) {
 

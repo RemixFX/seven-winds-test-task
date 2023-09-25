@@ -5,31 +5,35 @@ import EditableRow from '../EditableRow/editable-row'
 import styles from './row.module.scss'
 import { RowProps } from './row.types'
 
-
 export default function Row({ level, hasSister, arrStream, data, isCreated, isUpdated, deleteRow, updateOrCreateRow }: RowProps) {
 
   const [isEdited, setIsEdited] = useState<UpdateOrCreateRowRequest | null>(null)
   const [parentId, setParentId] = useState<CreateRowRequest['parentId']>(null)
 
+  // Передача id элемента для удаления на уровень выше
   const handleDelete = () => deleteRow(data.id)
 
+  // Запуск редактирования элемента при двойном клике, передача данных в состояние
   const editeRow = () => {
     const rowData: UpdateOrCreateRowRequest = { ...data, parentId: null }
     setIsEdited(rowData)
   }
 
+  // Закрытие компонента создания элемента, при изменении состояния об успешной загрузке
   useEffect(() => {
     if (isCreated) {
       setParentId(null)
     }
   }, [isCreated])
 
+    // Закрытие компонента редактрования элемента, при изменении состояния об успешной загрузке
   useEffect(() => {
     if (isUpdated) {
       setIsEdited(null)
     }
   }, [isUpdated])
 
+  // Передача массива булевых значений, определяющего есть ли сестры и дети у элемента на текущем уровне
   const sendStreamData = () => {
     if ((data.child.length > 0) && hasSister) {
       return true

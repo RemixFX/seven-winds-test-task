@@ -1,12 +1,7 @@
 import { ChangeEvent, KeyboardEvent, useReducer } from 'react'
 import styles from './editable-row.module.scss'
-import { setInitialState, reducer } from './editable-row.service'
+import { setInitialState, reducer, setStyleLevel } from './editable-row.service'
 import { EditableRowProps } from './editable-row.types'
-
-function setStyleLevel(level: number): number {
-  if (!level) return 12
-  return (level * 20) + 12
-}
 
 export default function EditableRow({ updateOrCreateRow, level, isEditedData, parentId, isLoaded }: EditableRowProps) {
 
@@ -15,8 +10,9 @@ export default function EditableRow({ updateOrCreateRow, level, isEditedData, pa
     isEditedData ? isEditedData : setInitialState(parentId)
   )
 
-  function handleRowNameChange(e: ChangeEvent<HTMLInputElement>) {
 
+  // Функции отправки состояний 
+  function handleRowNameChange(e: ChangeEvent<HTMLInputElement>) {
     dispatch({
       type: 'change_rowName',
       newValue: e.target.value
@@ -51,11 +47,14 @@ export default function EditableRow({ updateOrCreateRow, level, isEditedData, pa
     })
   }
 
+  // Отправка состояния редюсера на верхний уровень при нажатии клавиши 'Enter'
   function handleKeyDown(e: KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Enter') {
       updateOrCreateRow(state)
     }
   }
+
+  // Закрытие формы при изменении состояния успешной загрузки
 
   if (isLoaded) {
     return null

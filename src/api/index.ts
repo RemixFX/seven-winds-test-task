@@ -1,8 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { ResponseRow, TreeResponse, DeleteRowRequest, UpdateRowRequestWithId, CreateRowRequestWithId } from '../types'
 
-// Рекурсивная функция для добавления новых элементов
-
 // Рекурсивная функция для создания новых элементов
 const createItem = (tree: TreeResponse[], parentId: number, createdItems: ResponseRow): void => {
   for (const item of tree) {
@@ -10,14 +8,13 @@ const createItem = (tree: TreeResponse[], parentId: number, createdItems: Respon
       if (!item.child) {
         item.child = [];
       }
-      item.child.push(createdItems.current);
+      item.child.push(createdItems.current)
     }
     if (item.child) {
-      createItem(item.child, parentId, createdItems);
+      createItem(item.child, parentId, createdItems)
     }
   }
 
-  // Обновляем элементы из массива changed
   for (const changedItem of createdItems.changed) {
     updateItem(tree, changedItem.id, { current: changedItem, changed: [] });
   }
@@ -27,14 +24,13 @@ const createItem = (tree: TreeResponse[], parentId: number, createdItems: Respon
 const updateItem = (tree: TreeResponse[], rID: number, updatedItems: ResponseRow): void => {
   for (const item of tree) {
     if (item.id === rID) {
-      Object.assign(item, updatedItems.current);
+      Object.assign(item, updatedItems.current)
     }
     if (item.child) {
-      updateItem(item.child, rID, updatedItems);
+      updateItem(item.child, rID, updatedItems)
     }
   }
 
-  // Обновляем элементы из массива changed
   for (const changedItem of updatedItems.changed) {
     updateItem(tree, changedItem.id, { current: changedItem, changed: [] });
   }
@@ -42,20 +38,19 @@ const updateItem = (tree: TreeResponse[], rID: number, updatedItems: ResponseRow
 
 // Рекурсивная функция для удаления элемента
 const deleteItem = (tree: TreeResponse[], rID: number, deletedItems: ResponseRow): void => {
-  const index = tree.findIndex(index => index.id === rID);
+  const index = tree.findIndex(index => index.id === rID)
   if (index !== -1) {
-    tree.splice(index, 1);
+    tree.splice(index, 1)
   }
 
   for (const item of tree) {
     if (item.child) {
-      deleteItem(item.child, rID, deletedItems);
+      deleteItem(item.child, rID, deletedItems)
     }
   }
 
-  // Обновляем элементы из массива changed
   for (const changedItem of deletedItems.changed) {
-    updateItem(tree, changedItem.id, { current: changedItem, changed: [] });
+    updateItem(tree, changedItem.id, { current: changedItem, changed: [] })
   }
 }
 
@@ -68,13 +63,14 @@ export const outlayStringControllerApi = createApi({
       query: (eID) => `v1/outlay-rows/entity/${eID}/row/list`,
       providesTags: ['Row'],
     }),
+    // Метод создания элемента
     createRowInEntity: builder.mutation<ResponseRow, CreateRowRequestWithId>({
       query: ({ eID, ...data }) => ({
         url: `/v1/outlay-rows/entity/${eID}/row/create`,
         method: 'POST',
         body: data,
       }),
-      /* Обновление кеша*/
+      // Обновление кеша
       async onQueryStarted({ eID, ...data }, { dispatch, queryFulfilled }) {
         try {
           const { data: updatedRows } = await queryFulfilled
@@ -92,6 +88,7 @@ export const outlayStringControllerApi = createApi({
         }
       },
     }),
+    // Метод обновления элемента
     updateRowInEntity: builder.mutation<ResponseRow, UpdateRowRequestWithId>({
       query: ({ eID, rID, ...data }) => ({
         url: `/v1/outlay-rows/entity/${eID}/row/${rID}/update`,
@@ -111,6 +108,7 @@ export const outlayStringControllerApi = createApi({
         }
       },
     }),
+    // Метод удаления элемента
     deleteRow: builder.mutation<ResponseRow, DeleteRowRequest>({
       query: ({ eID, rID }) => ({
         url: `/v1/outlay-rows/entity/${eID}/row/${rID}/delete`,

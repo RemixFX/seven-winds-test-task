@@ -1,6 +1,12 @@
 import { UpdateOrCreateRowRequest } from '../../types';
 import { Action } from './editable-row.types';
 
+// Возвращает число-отступ в зависимости от вложенности
+export function setStyleLevel(level: number): number {
+  return (level * 20) + 12
+}
+
+// Начальное состояние редюсера, если не были переданы другие параметры
 const initialState: UpdateOrCreateRowRequest = {
   parentId: null,
   rowName: '',
@@ -15,6 +21,7 @@ const initialState: UpdateOrCreateRowRequest = {
   supportCosts: 0
 }
 
+// Добавление id родительского элемента
 export const setInitialState = (id: UpdateOrCreateRowRequest['parentId']) => {
   if (id) {
     initialState.parentId = id
@@ -23,6 +30,7 @@ export const setInitialState = (id: UpdateOrCreateRowRequest['parentId']) => {
   return initialState
 }
 
+// Функция редюсера, изменение состояний, в зависимости от типа
 export const reducer =
   (state: UpdateOrCreateRowRequest, action: Action)
     : UpdateOrCreateRowRequest => {
